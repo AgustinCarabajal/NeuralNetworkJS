@@ -1,9 +1,26 @@
 'use strict'
 
-function Point() {
-  this.x = random(width)
-  this.y = random(height)
-  this.target = this.x > this.y? 1: -1
+function f(x) {
+  // y = mx + b
+  return 0.3 * x + 0.2
+}
+
+function Point(_x = random(-1, 1), _y = random(-1, 1)) {
+  this.x = _x
+  this.y = _y
+  this.bias = 1
+
+  let lineY = f(this.x)
+
+  this.target = this.y > lineY ? 1: -1
+
+  this.getX = () => {
+    return map(this.x, -1, 1, 0, width)
+  }
+
+  this.getY = () => {
+    return map(this.y, -1, 1, height, 0)
+  }
 
   this.show = function() {
     stroke(0)
@@ -12,6 +29,9 @@ function Point() {
     } else {
       fill(0)
     }
-    ellipse(this.x, this.y, 32, 32)
+
+    let px = this.getX()
+    let py = this.getY()
+    ellipse(px, py, 32, 32)
   }
 }
