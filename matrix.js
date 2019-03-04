@@ -46,11 +46,23 @@ class Matrix {
   }
 
   multiply(n) {
-
-    // Scalar product
-    for (let i = 0; i < this.rows; i++) { 
+    if (n instanceof Matrix) {
+      for (let i = 0; i < this.rows; i++) { 
+        for (let j = 0; j < this.cols; j++) {
+          // Dot product of values
+          let sum = 0
+          for (let k = 0; k < this.cols; k++) {
+            sum += this.data[i][k] * n.data[k][j]
+          }
+          this.data[i][j] = sum
+        }
+      }
+    } else {
+      // Scalar product
+      for (let i = 0; i < this.rows; i++) { 
       for (let j = 0; j < this.cols; j++) {
         this.data[i][j] *= n
+      }
       }
     }
 
@@ -105,6 +117,19 @@ class Matrix {
     return result
   }
 
+  static subtract(m1, m2) {
+    // Return a new Matrix m1 - m2
+    let result = new Matrix(m1.rows, m1.cols)
+
+    for (let i = 0; i < result.rows; i++) { 
+      for (let j = 0; j < result.cols; j++) {
+        result.data[i][j] = m1.data[i][j] - m2.data[i][j]
+      }
+    }
+    
+    return result
+  }
+
   static transpose(m) {
     let result = new Matrix(m.cols, m.rows)
 
@@ -126,4 +151,15 @@ class Matrix {
     return m
   }
 
+  static map(m, fn) {
+    let res = new Matrix(m.rows, m.cols)
+    for (let i = 0; i < res.rows; i++) { 
+      for (let j = 0; j < res.cols; j++) {
+        let val = m.data[i][j]
+        res.data[i][j] = fn(val)
+      }
+    }
+
+    return res
+  }
 }
