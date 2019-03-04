@@ -1,52 +1,99 @@
 'use strict'
 
-const totalPoints = 10
-let perceptron
-let points = []
+let r, g, b
+let brain
+let which = 'black'
 
 function setup() {
-  createCanvas(600, 600)
+  createCanvas(600, 300)
+  noLoop()
 
-  let inputs = [1, -0.5]
-  perceptron = new Perceptron()
-  let output = perceptron.guess(inputs)
-  console.log(output)
+  brain = new NeuralNetwork(3, 3, 2)
 
-  for(let i = 0; i < totalPoints; i++) {
-    points[i] = new Point()
+  for (let i = 0; i < 50000; i ++) {
+    let r = random(255)
+    let g = random(255)
+    let b = random(255)
+    let targets = trainColor(r, g, b)
+    let inputs = [r / 255, g / 255, b / 255]
+
+    brain.train(inputs, targets)
   }
+
+  pickColor()
+  
 }
 
 function draw() {
-  background(51)
+  background(r, g, b)
+  stroke(0)
+  line(width / 2, height, width / 2, 0)
 
-  for(let p of points) {
-    p.show()
+  textSize(64)
+  noStroke()
+  fill(0)
+  textAlign(CENTER)
+  text('Black', 150, 150)
+  fill(255)
+  text('White', 450, 150)
+
+  which = colorPredictor(r, g, b)
+  if (which === 'black') {
+    fill(0)
+    ellipse(150, 200, 60)
+  } else {
+    fill(255)
+    ellipse(450, 200, 60)
   }
 
-  for (let p of points) {
-    // perceptron.train([p.x, p.y], p.target)
-    let guess = perceptron.guess([p.x, p.y])
-    if (guess === p.target) {
-      fill(0, 255, 0)
-    } else {
-      fill(255, 0, 0)
-    }
-    noStroke()
-    ellipse(p.x, p.y, 16, 16)
+}
+
+function colorPredictor(r, g, b) {
+  
+  let inputs = [r / 255, g / 255, b /255]
+  let outputs = brain.predict(inputs)
+  console.log(outputs)
+
+  if (outputs[0] > outputs[1]) {
+    return 'black'
+  } else {
+    return 'white'
+  }
+  
+  // if (r + b + g > 300) {
+  //   return 'black'
+  // } else {
+  //   return 'white'
+  // }
+}
+
+function trainColor(r, g, b) {
+  if (r + b + g > (255 * 3) / 2) {
+    return [1, 0]
+  } else {
+    return [0, 1]
   }
 }
 
+function pickColor() {
+  r = random(255)
+  g = random(255)
+  b = random(255)
+
+  redraw()
+}
+
 function mousePressed() {
-  for (let p of points) {
-    perceptron.train([p.x, p.y], p.target)
-    let guess = perceptron.guess([p.x, p.y])
-    if (guess === p.target) {
-      fill(0, 255, 0)
-    } else {
-      fill(255, 0, 0)
-    }
-    noStroke()
-    ellipse(p.x, p.y, 16, 16)
-  }
+  // let targets = []
+  // if (mouseX > width / 2) {
+  //   targets = [0, 1]
+  // } else {
+  //   targets = [1, 0]
+  // }
+
+  // let inputs = [r / 255, g / 255, b /255]
+
+  // brain.train(inputs, targets)
+
+  pickColor()
 }
