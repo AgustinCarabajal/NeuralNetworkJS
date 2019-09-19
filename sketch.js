@@ -3,6 +3,7 @@
 let r, g, b
 let brain
 let which = 'black'
+let outputs = []
 
 function setup() {
   createCanvas(600, 300)
@@ -34,8 +35,13 @@ function draw() {
   fill(0)
   textAlign(CENTER)
   text('Black', 150, 150)
+  textSize(24)
+  text(`${outputs[0]}`, 150, 290)
   fill(255)
+  textSize(64)
   text('White', 450, 150)
+  textSize(24)
+  text(`${outputs[1]}`, 450, 290)
 
   which = colorPredictor(r, g, b)
   if (which === 'black') {
@@ -51,7 +57,7 @@ function draw() {
 function colorPredictor(r, g, b) {
   
   let inputs = [r / 255, g / 255, b /255]
-  let outputs = brain.predict(inputs)
+  outputs = brain.predict(inputs)
   console.log(outputs)
 
   if (outputs[0] > outputs[1]) {
